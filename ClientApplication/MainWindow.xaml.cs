@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
 using WcfServiceLibrary;
+using TabItem = WcfServiceLibrary.TabItem;
 
 namespace ClientApplication
 {
@@ -29,13 +30,13 @@ namespace ClientApplication
     {
         ObservableCollection<TabItem> database = new ObservableCollection<TabItem>();
 
-        Service1Client client;
+        IService1 client;
 
-        public void OnDatabaseUpdated(OnDatabaseUpdated request)
+        public void OnDatabaseUpdated(List<TabItem> request)
         {
             var index = tabTables.SelectedIndex;
 
-            database = new ObservableCollection<TabItem>(request.database);
+            database = new ObservableCollection<TabItem>(request);
 
             foreach(var table in database)
             {
@@ -54,9 +55,11 @@ namespace ClientApplication
         {
             InitializeComponent();
 
-            var callback = this;
-            var instanceContext = new InstanceContext(callback);
-            client = new Service1Client(instanceContext);
+            Uri tcpUri = new Uri("net.tcp://localhost:8000/Database/mex");
+            EndpointAddress addr = new EndpointAddress(tcpUri);
+            NetTcpBinding clientBidning = new NetTcpBinding();
+            ChannelFactory<IService1> factory = new DuplexChannelFactory<IService1>(this, clientBidning, addr);
+            client = factory.CreateChannel();
 
             client.Register();
 
@@ -104,7 +107,7 @@ namespace ClientApplication
 
                 var db = serial.ReadObject(reader) as List<TabItem>;
 
-                client.UpdateDatabase(db.ToArray());
+                client.UpdateDatabase(db);
             }
         }
 

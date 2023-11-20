@@ -85,7 +85,6 @@
     <Compile Include="RemoveTableDialog.xaml.cs">
       <DependentUpon>RemoveTableDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Service1.cs" />
     <Page Include="AddColumnDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

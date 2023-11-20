@@ -17,17 +17,13 @@ namespace GettingStartedHost
 };
             AppDomain.CurrentDomain.SetData("System.Data.DataSetDefaultAllowedTypes", extraAllowedTypes);
 
-            Uri baseAddress = new Uri("http://localhost:8000/Database/");
+            Uri baseAddress = new Uri("net.tcp://localhost:8000/Database/");
 
             ServiceHost selfHost = new ServiceHost(typeof(Service1), baseAddress);
 
             try
             {
-                selfHost.AddServiceEndpoint(typeof(IService1), new WSDualHttpBinding(), "mex");
-
-                ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-                smb.HttpGetEnabled = true;
-                selfHost.Description.Behaviors.Add(smb);
+                selfHost.AddServiceEndpoint(typeof(IService1), new NetTcpBinding(), "mex");
 
                 selfHost.Open();
                 Console.WriteLine("The service is ready.");
